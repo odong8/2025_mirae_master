@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SW·AI 교육강사 2급 핵심정리 대시보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chosen Palette: Calm Study -->
+    <!-- Application Structure Plan: A dashboard-style SPA with a fixed sidebar for navigation and a main content area. This structure allows users to easily jump between the 7 major exam topics without losing context. Within each topic, information is organized into interactive cards and accordions to reduce cognitive load and encourage focused learning. Key concepts are visualized using charts and custom HTML/CSS diagrams to transform dense text into intuitive visual aids. This non-linear, interactive approach is chosen over a simple document layout to enhance user engagement and knowledge retention for exam preparation. -->
+    <!-- Visualization & Content Choices:
+        - Report Info: AI Ethical Principles (list). Goal: Inform. Viz: Donut Chart (Chart.js). Interaction: Hover to see principle name and value. Justification: Visually represents the components of AI ethics, making it more memorable than a simple list.
+        - Report Info: Machine Learning Types (list). Goal: Compare. Viz: Horizontal Bar Chart (Chart.js). Interaction: Hover to compare types. Justification: Provides a clear visual comparison of the three main ML paradigms.
+        - Report Info: Algorithm Control Structures. Goal: Organize. Viz: HTML/CSS Flexbox Diagram. Interaction: Static visual. Justification: Simplifies the abstract concept of control flow into a clear, structured diagram.
+        - Report Info: Data Structures (Linear vs. Non-linear). Goal: Compare. Viz: HTML/CSS Grid Layout with cards. Interaction: Clickable tabs. Justification: Allows for a direct, side-by-side comparison of the two fundamental data structure types.
+        - Report Info: Development Timeline. Goal: Show Change. Viz: Vertical Timeline with HTML/CSS. Interaction: Static visual. Justification: Presents historical progression in an easy-to-follow chronological format.
+        - Report Info: All other text. Goal: Inform/Organize. Method: Interactive accordions and cards. Interaction: Click to expand/collapse. Justification: Manages information density, allowing users to control the amount of visible content and focus on specific sub-topics.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #F9FAFB;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            background-color: #E5E7EB;
+            color: #111827;
+            border-left-color: #3B82F6;
+        }
+        .content-section {
+            scroll-margin-top: 1rem;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+        }
+        .accordion-header {
+            cursor: pointer;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+        @media (min-width: 640px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .tag {
+            background-color: #DBEAFE;
+            color: #1E40AF;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="flex min-h-screen">
+        <aside class="w-64 bg-white shadow-md fixed h-full hidden lg:block">
+            <div class="p-6">
+                <h1 class="text-xl font-bold text-blue-600">SW·AI 교육강사 2급</h1>
+                <p class="text-sm text-gray-500">핵심정리 대시보드</p>
+            </div>
+            <nav id="desktop-nav" class="mt-4">
+                <a href="#section-1" class="nav-link block p-4 text-gray-600 font-medium">1. 문제 해결 방법 및 절차</a>
+                <a href="#section-2" class="nav-link block p-4 text-gray-600 font-medium">2. AI 이해와 사회적 영향</a>
+                <a href="#section-3" class="nav-link block p-4 text-gray-600 font-medium">3. 정보 윤리 소양</a>
+                <a href="#section-4" class="nav-link block p-4 text-gray-600 font-medium">4. AI 원리와 활용</a>
+                <a href="#section-5" class="nav-link block p-4 text-gray-600 font-medium">5. 자료와 정보</a>
+                <a href="#section-6" class="nav-link block p-4 text-gray-600 font-medium">6. SW 교육론 및 교수법</a>
+                <a href="#section-7" class="nav-link block p-4 text-gray-600 font-medium">7. 시험 안내</a>
+            </nav>
+        </aside>
+
+        <main class="flex-1 lg:ml-64 p-4 sm:p-6 md:p-8">
+            <header class="lg:hidden mb-6">
+                 <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-xl font-bold text-blue-600">SW·AI 교육강사 2급</h1>
+                        <p class="text-sm text-gray-500">핵심정리 대시보드</p>
+                    </div>
+                    <button id="mobile-menu-button" class="p-2 rounded-md text-gray-500 hover:bg-gray-200">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                </div>
+                 <nav id="mobile-nav" class="hidden mt-4 bg-white rounded-lg shadow-lg">
+                    <a href="#section-1" class="nav-link block p-4 text-gray-600 font-medium">1. 문제 해결 방법 및 절차</a>
+                    <a href="#section-2" class="nav-link block p-4 text-gray-600 font-medium">2. AI 이해와 사회적 영향</a>
+                    <a href="#section-3" class="nav-link block p-4 text-gray-600 font-medium">3. 정보 윤리 소양</a>
+                    <a href="#section-4" class="nav-link block p-4 text-gray-600 font-medium">4. AI 원리와 활용</a>
+                    <a href="#section-5" class="nav-link block p-4 text-gray-600 font-medium">5. 자료와 정보</a>
+                    <a href="#section-6" class="nav-link block p-4 text-gray-600 font-medium">6. SW 교육론 및 교수법</a>
+                    <a href="#section-7" class="nav-link block p-4 text-gray-600 font-medium">7. 시험 안내</a>
+                </nav>
+            </header>
+
+            <section id="section-1" class="content-section mb-12">
+                <h2 class="text-2xl font-bold mb-2">1. 문제 해결 방법 및 절차</h2>
+                <p class="mb-6 text-gray-600">문제 해결의 기본 흐름과 각 단계에서 요구되는 사고방식을 학습합니다. 컴퓨팅 사고력의 기초가 되는 핵심 개념들을 익힐 수 있습니다.</p>
+                <div class="space-y-4">
+                    <div class="card p-6 accordion">
+                        <div class="accordion-header flex justify-between items-center">
+                            <h3 class="text-lg font-semibold">문제의 이해와 분석</h3>
+                            <i class="fa fa-chevron-down"></i>
+                        </div>
+                        <div class="accordion-content mt-4 text-gray-600">
+                            <p><b>문제의 이해:</b> 일상생활 속에서 해결해야 할 과제나 상황을 의미하며, 문제 안의 다양한 요소를 찾아 관계를 파악하고 명확히 표현하는 것이 중요합니다. 탐색, 카운팅, 결정, 최적화 문제 등 다양한 유형이 있습니다.</p>
+                            <p class="mt-2"><b>문제 분석:</b> 문제가 발생한 현재 상태와 해결된 목표 상태를 이해하는 것이 중요합니다.</p>
+                            <p class="mt-2"><b>문제 분해:</b> 복잡한 문제를 해결 가능한 작은 문제로 나누는 것을 의미하며, 이는 문제 해결의 중요한 시작점이 됩니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card p-6 accordion">
+                        <div class="accordion-header flex justify-between items-center">
+                            <h3 class="text-lg font-semibold">추상화와 패턴 인식</h3>
+                            <i class="fa fa-chevron-down"></i>
+                        </div>
+                        <div class="accordion-content mt-4 text-gray-600">
+                           <p><b>추상화:</b> 문제의 복잡성을 제거하기 위한 핵심 요소 추출, 분석, 알고리즘 설계 과정을 말합니다. 불필요한 요소를 제거하고 필요한 요소를 찾아 문제를 단순화하는 작업입니다.</p>
+                           <p class="mt-2"><b>핵심 요소 찾기:</b> 상황, 사물, 정보 등에서 반드시 필요로 하는 요소를 찾아내는 작업으로, 문제 상황을 단순화하고 쉽게 해결할 수 있도록 돕습니다.</p>
+                           <p class="mt-2"><b>패턴 인식과 일반화:</b> 문제 해결을 위해 정보들 간의 유사점을 찾는 것을 패턴 인식이라 하며, 이를 통해 새로운 규칙을 만들 수 있습니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card p-6 accordion">
+                        <div class="accordion-header flex justify-between items-center">
+                            <h3 class="text-lg font-semibold">알고리즘과 제어 구조</h3>
+                            <i class="fa fa-chevron-down"></i>
+                        </div>
+                        <div class="accordion-content mt-4 text-gray-600">
+                            <p><b>알고리즘:</b> 문제를 해결하기 위해 해야 할 일을 순서대로 설명하거나 표현한 것입니다. 입력, 출력, 명확성, 유한성, 실행가능성을 만족해야 합니다.</p>
+                            <p class="mt-4"><b>제어 구조 시각화:</b></p>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2 text-center">
+                                <div class="border p-4 rounded-lg">
+                                    <h4 class="font-bold">순차 구조</h4>
+                                    <div class="mt-2 flex flex-col items-center space-y-2">
+                                        <div class="w-24 h-8 bg-blue-200 rounded flex items-center justify-center">명령 1</div>
+                                        <i class="fa fa-arrow-down"></i>
+                                        <div class="w-24 h-8 bg-blue-200 rounded flex items-center justify-center">명령 2</div>
+                                    </div>
+                                </div>
+                                <div class="border p-4 rounded-lg">
+                                    <h4 class="font-bold">선택 구조</h4>
+                                    <div class="mt-2 flex flex-col items-center">
+                                        <div class="w-24 h-8 bg-green-200 rounded flex items-center justify-center">조건</div>
+                                        <div class="flex mt-2 w-full justify-around">
+                                            <div class="flex flex-col items-center"><i class="fa fa-arrow-down"></i><span class="text-xs">참</span><div class="w-20 h-8 bg-green-100 rounded mt-1">실행 A</div></div>
+                                            <div class="flex flex-col items-center"><i class="fa fa-arrow-down"></i><span class="text-xs">거짓</span><div class="w-20 h-8 bg-red-100 rounded mt-1">실행 B</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="border p-4 rounded-lg">
+                                    <h4 class="font-bold">반복 구조</h4>
+                                    <div class="mt-2 flex flex-col items-center space-y-1">
+                                         <div class="w-24 h-8 bg-yellow-200 rounded flex items-center justify-center">조건 검사</div>
+                                         <i class="fa fa-sync-alt"></i>
+                                         <div class="w-24 h-8 bg-yellow-100 rounded flex items-center justify-center">명령 반복</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mt-4"><b>재귀 호출 알고리즘:</b> 함수가 자신을 다시 호출하여 작업을 수행하는 것으로, 반복 구조로 구현 가능하며 종료 조건이 반드시 포함되어야 무한 루프를 방지할 수 있습니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card p-6 accordion">
+                        <div class="accordion-header flex justify-between items-center">
+                            <h3 class="text-lg font-semibold">정렬 및 탐색 알고리즘</h3>
+                            <i class="fa fa-chevron-down"></i>
+                        </div>
+                        <div class="accordion-content mt-4 text-gray-600">
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h4 class="font-bold mb-2">정렬 알고리즘</h4>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li><b>버블 정렬:</b> 인접한 두 값을 비교하여 자리를 바꾸는 방식.</li>
+                                        <li><b>선택 정렬:</b> 전체 자료 중 기준을 선택해 자리를 교환하는 방식.</li>
+                                        <li><b>삽입 정렬:</b> 정렬되지 않은 데이터를 정렬된 영역에 삽입하는 방식.</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold mb-2">탐색 알고리즘</h4>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li><b>순차 탐색:</b> 자료를 일렬로 나열하여 처음부터 순서대로 검색.</li>
+                                        <li><b>이진 탐색:</b> 정렬된 데이터에서 가운데 값을 기준으로 검색.</li>
+                                    </ul>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section-2" class="content-section mb-12">
+                <h2 class="text-2xl font-bold mb-2">2. 인공지능의 이해와 사회적 영향</h2>
+                <p class="mb-6 text-gray-600">인공지능의 개념, 발전 과정, 그리고 사회에 미치는 긍정적/부정적 영향을 이해하고 윤리적 문제에 대한 소양을 기릅니다.</p>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-3">인공지능의 수준과 접근법</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-bold">AI 수준</h4>
+                                <p class="text-sm"><span class="tag">약인공지능</span> 현재 대부분의 AI</p>
+                                <p class="text-sm mt-1"><span class="tag">강인공지능</span> 인간 수준의 사고 (미개발)</p>
+                                <p class="text-sm mt-1"><span class="tag">초인공지능</span> 인간을 초월한 지능</p>
+                            </div>
+                             <div>
+                                <h4 class="font-bold">AI 접근법</h4>
+                                <p class="text-sm"><span class="tag">지식 기반 접근법</span> 전문가 지식 활용</p>
+                                <p class="text-sm mt-1"><span class="tag">데이터 지향 접근법</span> 데이터 기반 학습</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-3">인공지능 발전 과정</h3>
+                         <div class="relative border-l-2 border-blue-200 pl-6 space-y-8">
+                            <div class="relative">
+                                <div class="absolute -left-7 top-1 w-4 h-4 bg-blue-500 rounded-full"></div>
+                                <p class="font-semibold">1950~1960년대</p>
+                                <p class="text-sm text-gray-600">개념 등장, 첫 번째 빙하기</p>
+                            </div>
+                             <div class="relative">
+                                <div class="absolute -left-7 top-1 w-4 h-4 bg-blue-500 rounded-full"></div>
+                                <p class="font-semibold">1970~1980년대</p>
+                                <p class="text-sm text-gray-600">'전문가 시스템' 주목, 두 번째 빙하기</p>
+                            </div>
+                             <div class="relative">
+                                <div class="absolute -left-7 top-1 w-4 h-4 bg-blue-500 rounded-full"></div>
+                                <p class="font-semibold">현대</p>
+                                <p class="text-sm text-gray-600">딥러닝 등장으로 발전 가속화</p>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+
+                 <div class="card p-6 mt-6">
+                    <h3 class="text-lg font-semibold mb-3 text-center">인공지능의 윤리적 문제</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                             <div class="p-4 bg-gray-50 rounded-lg">
+                                <h4 class="font-bold text-red-600">데이터 편향성</h4>
+                                <p class="text-sm text-gray-600">편향된 데이터 학습으로 차별적 결과 초래</p>
+                             </div>
+                              <div class="p-4 bg-gray-50 rounded-lg">
+                                <h4 class="font-bold text-red-600">필터버블</h4>
+                                <p class="text-sm text-gray-600">개인화된 검색 결과로 이념적 거품에 갇힘</p>
+                             </div>
+                             <div class="p-4 bg-gray-50 rounded-lg">
+                                <h4 class="font-bold text-red-600">딥페이크</h4>
+                                <p class="text-sm text-gray-600">AI 기반 이미지 합성 기술의 악용</p>
+                             </div>
+                             <div class="p-4 bg-gray-50 rounded-lg">
+                                <h4 class="font-bold text-red-600">책임성</h4>
+                                <p class="text-sm text-gray-600">AI의 판단과 행동에 대한 책임 주체 문제</p>
+                             </div>
+                        </div>
+                        <div>
+                             <p class="text-center font-semibold mb-2">AI 윤리 원칙</p>
+                             <div class="chart-container">
+                                <canvas id="ethicsChart"></canvas>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-3" class="content-section mb-12">
+                <h2 class="text-2xl font-bold mb-2">3. 정보 윤리 소양</h2>
+                <p class="mb-6 text-gray-600">정보 사회 구성원으로서 필요한 올바른 가치관과 행동 양식을 다룹니다. 사이버 폭력, 스마트폰 과의존, 저작권의 개념과 실제 사례를 학습합니다.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-3"><i class="fa fa-user-ninja mr-2"></i>사이버 폭력</h3>
+                        <p class="text-sm mb-2"><b>특징:</b> 높은 전파성, 시공간 초월, 기록 영구성, 은밀성.</p>
+                        <p class="text-sm"><b>유형:</b> 언어폭력, 스토킹, 영상 유포, 신상정보 유출, 명예훼손, 따돌림 등</p>
+                    </div>
+                     <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-3"><i class="fa fa-mobile-screen-button mr-2"></i>스마트폰 과의존</h3>
+                        <p class="text-sm">스마트폰 사용을 조절하지 못하고 계속 이용하려는 현상. 자가 진단 및 예방이 중요합니다.</p>
+                    </div>
+                     <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-3"><i class="fa fa-copyright mr-2"></i>저작권</h3>
+                         <p class="text-sm mb-2"><b>정의:</b> 창작물에 대한 독점적 권리.</p>
+                        <p class="text-sm"><b>종류:</b> 저작인격권(명예), 저작재산권(경제적 권리), 저작인접권(실연자 등).</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-4" class="content-section mb-12">
+                <h2 class="text-2xl font-bold mb-2">4. 인공지능의 원리와 활용</h2>
+                <p class="mb-6 text-gray-600">인공지능의 핵심인 데이터, 분류, 탐색, 추론의 개념을 이해하고 교육용 도구를 활용한 구현 능력을 기릅니다.</p>
+                 <div class="space-y-4">
+                    <div class="card p-6 accordion">
+                        <div class="accordion-header flex justify-between items-center">
+                            <h3 class="text-lg font-semibold">데이터와 분류</h3>
+                            <i class="fa fa-chevron-down"></i>
+                        </div>
+                        <div class="accordion-content mt-4 text-gray-600">
+                            <p><b>데이터:</b> AI의 핵심 재료. 정형/비정형 데이터로 나뉨.</p>
+                            <p class="mt-2"><b>분류:</b> 주어진 대상을 기준에 따라 나누는 활동. 의사결정트리 등이 분류 모델에 해당함.</p>
+                        </div>
+                    </div>
+                    <div class="card p-6 accordion">
+                        <div class="accordion-header flex justify-between items-center">
+                            <h3 class="text-lg font-semibold">탐색</h3>
+                            <i class="fa fa-chevron-down"></i>
+                        </div>
+                        <div class="accordion-content mt-4 text-gray-600">
+                           <p><b>탐색:</b> 해답에 이르는 경로를 찾는 과정. 초기상태, 목표상태, 동작, 상태공간이 필요.</p>
+                           <ul class="list-disc list-inside mt-2 space-y-1">
+                               <li><b>깊이 우선 탐색(DFS):</b> 한 방향으로 끝까지 탐색.</li>
+                               <li><b>너비 우선 탐색(BFS):</b> 가까운 노드부터 탐색.</li>
+                               <li><b>최상 우선 탐색:</b> 경험적 지식을 활용해 최적 경로를 선택.</li>
+                           </ul>
+                        </div>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-3 text-center">머신러닝의 종류</h3>
+                        <p class="text-center text-gray-600 text-sm mb-4">데이터에 정답(label) 유무와 학습 방식에 따라 분류됩니다.</p>
+                        <div class="chart-container h-64 sm:h-80">
+                            <canvas id="mlChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+             <section id="section-5" class="content-section mb-12">
+                <h2 class="text-2xl font-bold mb-2">5. 자료와 정보</h2>
+                <p class="mb-6 text-gray-600">자료의 디지털 표현 방식과 효율적인 자료 관리를 위한 자료 구조 및 데이터베이스 개념을 다룹니다.</p>
+                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                     <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-3">디지털 표현과 압축</h3>
+                        <ul class="space-y-2 text-gray-600 text-sm">
+                           <li><b>숫자/문자:</b> 2진수, 아스키/유니코드로 표현.</li>
+                           <li><b>그림:</b> 비트맵(픽셀, 계단 현상 발생 가능), 벡터(수식).</li>
+                           <li><b>소리:</b> 표본화 → 양자화 → 부호화.</li>
+                           <li><b>압축:</b> 중복/불필요 정보를 제거하여 크기를 줄임.</li>
+                        </ul>
+                    </div>
+                     <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-3">자료 구조</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                             <div>
+                                <h4 class="font-bold">선형 구조</h4>
+                                <p class="text-sm text-gray-600">일렬로 나열</p>
+                                <p class="text-sm mt-1"><span class="tag">스택(LIFO)</span></p>
+                                <p class="text-sm mt-1"><span class="tag">큐(FIFO)</span></p>
+                             </div>
+                             <div>
+                                <h4 class="font-bold">비선형 구조</h4>
+                                <p class="text-sm text-gray-600">계층/망 형태</p>
+                                <p class="text-sm mt-1"><span class="tag">트리</span></p>
+                                <p class="text-sm mt-1"><span class="tag">그래프</span></p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="card p-6 lg:col-span-2">
+                        <h3 class="text-lg font-semibold mb-3">데이터베이스(DB)</h3>
+                        <p class="mb-3 text-gray-600">여러 사용자가 공유하고 통합 관리하는 데이터 집합입니다.</p>
+                        <p class="mb-2"><b>특징:</b> 동시 공유, 중복 감소, 일관성/무결성 유지, 보안, 독립성.</p>
+                        <p class="mb-2"><b>관계형 DB 키 종류:</b> 슈퍼키, 후보키, <span class="font-bold text-blue-600">기본키(PK)</span>, 대체키, <span class="font-bold text-blue-600">외래키(FK)</span>.</p>
+                        <p><b>무결성 제약조건:</b> 개체 무결성(PK는 NULL/중복 불가), 참조 무결성(FK는 참조하는 PK값만 허용).</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section-6" class="content-section mb-12">
+                <h2 class="text-2xl font-bold mb-2">6. SW 교육론 및 SW 교수법</h2>
+                <p class="mb-6 text-gray-600">SW 교육과정, 다양한 교수·학습 모델, 평가 방법 및 학습자의 특성을 이해합니다.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="card p-6">
+                         <h3 class="text-lg font-semibold mb-3">교수·학습 모델</h3>
+                         <ul class="list-disc list-inside space-y-2 text-gray-600">
+                             <li><b>시연중심모델:</b> 교사 시연 → 학생 모방 → 제작</li>
+                             <li><b>재구성중심모델:</b> 기존 프로젝트 수정 및 확장</li>
+                             <li><b>개발중심모델:</b> 학습자 주도 개발</li>
+                             <li><b>디자인중심모델:</b> 디자인 사고 과정 활용</li>
+                             <li><b>프로젝트 학습법 (PBL):</b> 자기주도적 학습</li>
+                         </ul>
+                    </div>
+                    <div class="card p-6">
+                         <h3 class="text-lg font-semibold mb-3">학습자 특성 (피아제)</h3>
+                          <div class="space-y-3">
+                             <p><b>전조작기 (2-7세):</b> 자기중심적 사고</p>
+                             <p><b>구체적 조작기 (7-11세):</b> 탈중심화, 논리적 사고 시작</p>
+                             <p><b>형식적 조작기 (11세-):</b> 추상적, 가설적 사고</p>
+                         </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section-7" class="content-section mb-12">
+                <h2 class="text-2xl font-bold mb-2">7. SW·AI 교육강사 자격시험 안내</h2>
+                <p class="mb-6 text-gray-600">시험 응시와 관련된 주요 규정 및 유의사항입니다. 응시 전 반드시 숙지해야 합니다.</p>
+                <div class="card p-6 bg-blue-50 border border-blue-200">
+                    <h3 class="text-lg font-semibold text-blue-800 mb-4">핵심 응시 정보</h3>
+                    <ul class="space-y-3 text-blue-700">
+                        <li class="flex items-start"><i class="fa fa-check-circle mt-1 mr-3 text-blue-600"></i><span><b>합격 기준:</b> 필기 및 실기 모두 100점 만점 중 <span class="font-bold text-red-600">70점 이상</span> 획득</span></li>
+                        <li class="flex items-start"><i class="fa fa-check-circle mt-1 mr-3 text-blue-600"></i><span><b>2급 응시 자격:</b> 3급 자격증 취득자 또는 관련 직무 경력 1년 이상</span></li>
+                        <li class="flex items-start"><i class="fa fa-check-circle mt-1 mr-3 text-blue-600"></i><span><b>접수처:</b> SW·AI 교육강사 자격시험 공식 홈페이지에서 온라인 접수</span></li>
+                        <li class="flex items-start"><i class="fa fa-exclamation-triangle mt-1 mr-3 text-yellow-600"></i><span><b>유의사항:</b> 신분증 미지참 시 응시 불가, 시험 중 전자기기 소지 불가 (적발 시 무효 처리)</span></li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const accordions = document.querySelectorAll('.accordion');
+            accordions.forEach(acc => {
+                const header = acc.querySelector('.accordion-header');
+                const content = acc.querySelector('.accordion-content');
+                const icon = header.querySelector('i');
+                header.addEventListener('click', () => {
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                        icon.classList.remove('fa-chevron-up');
+                        icon.classList.add('fa-chevron-down');
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        icon.classList.remove('fa-chevron-down');
+                        icon.classList.add('fa-chevron-up');
+                    }
+                });
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.content-section');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileNav = document.getElementById('mobile-nav');
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileNav.classList.toggle('hidden');
+            });
+
+            const onScroll = () => {
+                let currentSection = "";
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (window.pageYOffset >= sectionTop - 70) {
+                        currentSection = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${currentSection}`) {
+                        link.classList.add('active');
+                    }
+                });
+            };
+            
+            window.addEventListener('scroll', onScroll);
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    if (mobileNav.classList.contains('hidden') === false) {
+                       mobileNav.classList.add('hidden');
+                    }
+                });
+            });
+
+            const ethicsChartCtx = document.getElementById('ethicsChart').getContext('2d');
+            new Chart(ethicsChartCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['공정성', '투명성', '책임성', '신뢰성', '인간중심'],
+                    datasets: [{
+                        label: 'AI 윤리 원칙',
+                        data: [20, 20, 20, 20, 20],
+                        backgroundColor: [
+                            '#60A5FA', '#34D399', '#FBBF24', '#F87171', '#A78BFA'
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        title: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            const mlChartCtx = document.getElementById('mlChart').getContext('2d');
+            new Chart(mlChartCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['지도 학습 (Supervised)', '비지도 학습 (Unsupervised)', '강화 학습 (Reinforcement)'],
+                    datasets: [{
+                        label: '개념적 복잡도',
+                        data: [60, 75, 90],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(75, 192, 192, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
